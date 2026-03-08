@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>تقييم الإصابات الرياضية</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Bebas+Neue&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				--bg: #0a0e1a;
+				--surface: #111827;
+				--surface2: #1a2235;
+				--border: #1e2d45;
+				--primary: #00d4ff;
+				--primary-dim: rgba(0, 212, 255, 0.12);
+				--success: #10b981;
+				--warning: #f59e0b;
+				--danger: #ef4444;
+				--text: #f1f5f9;
+				--text-muted: #64748b;
+				--text-soft: #94a3b8;
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				font-family: "Tajawal", sans-serif;
+				background: var(--bg);
+				color: var(--text);
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				overflow-x: hidden;
+				position: relative;
+			}
+			body::before {
+				content: "";
+				position: fixed;
+				inset: 0;
+				background-image:
+					linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+					linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+				background-size: 50px 50px;
+				pointer-events: none;
+				z-index: 0;
+			}
+			body::after {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(
+					circle,
+					rgba(0, 212, 255, 0.06) 0%,
+					transparent 70%
+				);
+				top: -150px;
+				right: -150px;
+				pointer-events: none;
+				z-index: 0;
+			}
+			.orb2 {
+				position: fixed;
+				width: 500px;
+				height: 500px;
+				background: radial-gradient(
+					circle,
+					rgba(249, 115, 22, 0.05) 0%,
+					transparent 70%
+				);
+				bottom: -100px;
+				left: -100px;
+				pointer-events: none;
+				z-index: 0;
+			}
+			.card {
+				position: relative;
+				z-index: 1;
+				width: 94%;
+				max-width: 520px;
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: 24px;
+				padding: 2.2rem 2rem;
+				box-shadow:
+					0 0 0 1px rgba(0, 212, 255, 0.05),
+					0 25px 50px rgba(0, 0, 0, 0.6),
+					inset 0 1px 0 rgba(255, 255, 255, 0.04);
+				margin: 2rem auto;
+			}
+			.step {
+				display: none;
+			}
+			.active {
+				display: block;
+				animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+			}
+			@keyframes fadeUp {
+				from {
+					opacity: 0;
+					transform: translateY(18px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			.header {
+				text-align: center;
+				margin-bottom: 2rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.header h1 {
+				font-family: "Bebas Neue", sans-serif;
+				font-size: 2rem;
+				letter-spacing: 2px;
+				color: var(--primary);
+				text-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+				margin-bottom: 4px;
+			}
+			.header .subtitle {
+				font-size: 1.2rem;
+				color: #dbdcdc;
+				font-weight: 400;
+			}
+			.header-tag {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				background: var(--primary-dim);
+				border: 1px solid rgba(0, 212, 255, 0.2);
+				color: var(--primary);
+				font-size: 0.72rem;
+				font-weight: 700;
+				padding: 3px 10px;
+				border-radius: 20px;
+				margin-top: 8px;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+			}
+			.header-tag::before {
+				content: "";
+				width: 6px;
+				height: 6px;
+				background: var(--primary);
+				border-radius: 50%;
+				box-shadow: 0 0 6px var(--primary);
+				animation: pulse 2s infinite;
+			}
+			@keyframes pulse {
+				0%,
+				100% {
+					opacity: 1;
+				}
+				50% {
+					opacity: 0.4;
+				}
+			}
+			.section-label {
+				font-size: 0.7rem;
+				font-weight: 700;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: var(--text-muted);
+				margin-bottom: 1rem;
+				margin-top: 1.4rem;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.section-label::after {
+				content: "";
+				flex: 1;
+				height: 1px;
+				background: var(--border);
+			}
+			.input-group {
+				margin-bottom: 14px;
+			}
+			.row {
+				display: flex;
+				gap: 12px;
+			}
+			.flex-1 {
+				flex: 1;
+			}
+			label {
+				display: block;
+				margin-bottom: 7px;
+				font-weight: 600;
+				color: var(--text-soft);
+				font-size: 0.85rem;
+			}
+			input[type="text"],
+			input[type="number"],
+			select {
+				width: 100%;
+				padding: 11px 14px;
+				background: var(--surface2);
+				border: 1.5px solid var(--border);
+				border-radius: 10px;
+				color: var(--text);
+				font-family: "Tajawal", sans-serif;
+				font-size: 0.95rem;
+				transition:
+					border-color 0.2s,
+					box-shadow 0.2s,
+					background 0.2s;
+				outline: none;
+				-webkit-appearance: none;
+			}
+			input:focus,
+			select:focus {
+				border-color: var(--primary);
+				box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+				background: #1e2d40;
+			}
+			select option {
+				background: var(--surface2);
+			}
+			.range-wrapper {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+			input[type="range"] {
+				flex: 1;
+				-webkit-appearance: none;
+				height: 4px;
+				background: var(--border);
+				border-radius: 4px;
+				border: none;
+				padding: 0;
+				cursor: pointer;
+			}
+			input[type="range"]::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				width: 20px;
+				height: 20px;
+				background: var(--primary);
+				border-radius: 50%;
+				box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+				cursor: pointer;
+			}
+			input[type="range"]:focus {
+				box-shadow: none;
+				border: none;
+			}
+			.fatigue-value {
+				min-width: 36px;
+				height: 36px;
+				background: var(--primary-dim);
+				border: 1px solid rgba(0, 212, 255, 0.3);
+				color: var(--primary);
+				border-radius: 8px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: 800;
+				font-size: 1rem;
+			}
+			.btn-primary {
+				width: 100%;
+				padding: 15px;
+				background: linear-gradient(135deg, #0ea5e9, #00d4ff);
+				color: #0a0e1a;
+				border: none;
+				border-radius: 12px;
+				font-family: "Tajawal", sans-serif;
+				font-size: 1.05rem;
+				font-weight: 800;
+				cursor: pointer;
+				margin-top: 1.5rem;
+				transition: all 0.2s;
+				box-shadow: 0 8px 24px rgba(0, 212, 255, 0.25);
+			}
+			.btn-primary:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 12px 32px rgba(0, 212, 255, 0.35);
+			}
+			.btn-primary:active {
+				transform: translateY(0);
+			}
+			.btn-secondary {
+				width: 100%;
+				padding: 13px;
+				background: transparent;
+				border: 1.5px solid var(--border);
+				color: var(--text-soft);
+				border-radius: 12px;
+				font-family: "Tajawal", sans-serif;
+				font-size: 0.95rem;
+				font-weight: 600;
+				cursor: pointer;
+				margin-top: 10px;
+				transition: all 0.2s;
+			}
+			.btn-secondary:hover {
+				border-color: var(--primary);
+				color: var(--primary);
+				background: var(--primary-dim);
+			}
+			#step2 {
+				text-align: center;
+				padding: 2rem 0;
+			}
+			.loading-ring {
+				width: 80px;
+				height: 80px;
+				margin: 0 auto 2rem;
+			}
+			.loading-ring svg {
+				width: 100%;
+				height: 100%;
+				animation: rotate 2s linear infinite;
+			}
+			.loading-ring circle {
+				fill: none;
+				stroke-width: 4;
+				stroke-linecap: round;
+			}
+			.loading-ring .track {
+				stroke: var(--border);
+			}
+			.loading-ring .fill {
+				stroke: var(--primary);
+				stroke-dasharray: 200;
+				stroke-dashoffset: 50;
+				filter: drop-shadow(0 0 6px var(--primary));
+				animation: dash 1.5s ease-in-out infinite;
+			}
+			@keyframes rotate {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+			@keyframes dash {
+				0% {
+					stroke-dashoffset: 200;
+				}
+				50% {
+					stroke-dashoffset: 50;
+				}
+				100% {
+					stroke-dashoffset: 200;
+				}
+			}
+			.loading-text {
+				font-size: 1.15rem;
+				font-weight: 700;
+				color: var(--text);
+				margin-bottom: 8px;
+			}
+			.loading-sub {
+				font-size: 0.82rem;
+				color: var(--text-muted);
+				line-height: 2;
+			}
+			.loading-dots span {
+				display: inline-block;
+				width: 6px;
+				height: 6px;
+				background: var(--primary);
+				border-radius: 50%;
+				margin: 0 3px;
+				animation: blink 1.4s infinite;
+			}
+			.loading-dots span:nth-child(2) {
+				animation-delay: 0.2s;
+			}
+			.loading-dots span:nth-child(3) {
+				animation-delay: 0.4s;
+			}
+			@keyframes blink {
+				0%,
+				80%,
+				100% {
+					opacity: 0.2;
+					transform: scale(0.8);
+				}
+				40% {
+					opacity: 1;
+					transform: scale(1.2);
+				}
+			}
+			#step3 {
+				text-align: center;
+			}
+			#step3 h2 {
+				font-family: "Bebas Neue", sans-serif;
+				font-size: 1.6rem;
+				letter-spacing: 2px;
+				color: var(--text-soft);
+				margin-bottom: 1.5rem;
+			}
+			.score-ring {
+				position: relative;
+				width: 140px;
+				height: 140px;
+				margin: 0 auto 1.5rem;
+			}
+			.score-ring svg {
+				width: 100%;
+				height: 100%;
+				transform: rotate(-90deg);
+			}
+			.score-ring circle {
+				fill: none;
+				stroke-width: 8;
+				stroke-linecap: round;
+			}
+			.score-ring .bg-circle {
+				stroke: var(--border);
+			}
+			.score-ring .fg-circle {
+				stroke-dasharray: 339.3;
+				stroke-dashoffset: 339.3;
+				transition:
+					stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1),
+					stroke 0.5s;
+			}
+			.score-inner {
+				position: absolute;
+				inset: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
+			.score-number {
+				font-family: "Bebas Neue", sans-serif;
+				font-size: 2.8rem;
+				line-height: 1;
+				color: var(--text);
+			}
+			.score-label {
+				font-size: 0.65rem;
+				letter-spacing: 1.5px;
+				text-transform: uppercase;
+				color: var(--text-muted);
+				font-weight: 700;
+			}
+			.status-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				padding: 8px 20px;
+				border-radius: 30px;
+				font-weight: 700;
+				font-size: 0.9rem;
+				margin-bottom: 1.5rem;
+			}
+			.status-badge .dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				flex-shrink: 0;
+			}
+			.stats-row {
+				display: flex;
+				gap: 10px;
+				margin-bottom: 1.5rem;
+			}
+			.stat-pill {
+				flex: 1;
+				background: var(--surface2);
+				border: 1px solid var(--border);
+				border-radius: 10px;
+				padding: 10px 8px;
+				text-align: center;
+			}
+			.stat-pill .val {
+				font-weight: 800;
+				font-size: 1.1rem;
+				color: var(--primary);
+			}
+			.stat-pill .lbl {
+				font-size: 0.7rem;
+				color: var(--text-muted);
+				margin-top: 2px;
+			}
+			.advice-box {
+				background: var(--surface2);
+				border: 1px solid var(--border);
+				border-right: 3px solid var(--primary);
+				border-radius: 14px;
+				padding: 1.2rem 1.4rem;
+				margin: 0 0 1.5rem;
+				text-align: right;
+				line-height: 1.9;
+				font-size: 0.9rem;
+				color: var(--text-soft);
+			}
+			.advice-box .intro {
+				display: block;
+				font-weight: 700;
+				color: var(--text);
+				margin-bottom: 0.6rem;
+			}
+			.advice-box ul {
+				padding-right: 1.2rem;
+				margin: 0;
+			}
+			.advice-box ul li {
+				margin-bottom: 0.3rem;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="orb2"></div>
+		<div class="card">
+			<div id="step1" class="step active">
+				<div class="header">
+					<h1>Sports Injury Early Warning</h1>
+					<p class="subtitle">نظام الإنذار المبكر للإصابات الرياضية</p>
+				</div>
+				<div class="section-label">البيانات الأساسية</div>
+				<div class="input-group">
+					<label>اسم اللاعب</label>
+					<input type="text" id="name" placeholder="مثال: محمد علي" />
+				</div>
+				<div class="row">
+					<div class="input-group flex-1">
+						<label>العمر</label>
+						<input type="number" id="age" placeholder="25" />
+					</div>
+					<div class="input-group flex-1">
+						<label>الوزن (كجم)</label>
+						<input type="number" id="weight" placeholder="75" />
+					</div>
+				</div>
+				<div class="input-group">
+					<label>نوع الرياضة</label>
+					<input type="text" id="sport" placeholder="مثال: كرة القدم" />
+				</div>
+				<div class="section-label">مؤشرات الأداء</div>
+				<div class="input-group">
+					<label>ساعات التدريب يومياً</label>
+					<input type="number" id="trainHours" placeholder="2" />
+				</div>
+				<div class="input-group">
+					<label>ساعات النوم بالأمس</label>
+					<input type="number" id="sleepHours" placeholder="7" />
+				</div>
+				<div class="input-group">
+					<label>مستوى الإرهاق (1 – 10)</label>
+					<div class="range-wrapper">
+						<input type="range" id="fatigue" min="1" max="10" value="5" />
+						<div class="fatigue-value" id="fatigueVal">5</div>
+					</div>
+				</div>
+				<div class="section-label">الحالة الصحية</div>
+				<div class="input-group">
+					<label>هل تشعر بألم حالياً؟</label>
+					<select id="hasPain">
+						<option value="no">لا — لا يوجد ألم</option>
+						<option value="yes">نعم — يوجد ألم</option>
+					</select>
+				</div>
+				<div id="painLocationGroup" class="input-group" style="display: none">
+					<label>مكان الألم</label>
+					<input
+						type="text"
+						id="painLocation"
+						placeholder="مثال: الركبة اليمنى"
+					/>
+				</div>
+				<div class="input-group">
+					<label>هل تعرضت لإصابة سابقة؟</label>
+					<select id="prevInjury">
+						<option value="no">لا — لا توجد إصابات سابقة</option>
+						<option value="yes">نعم — توجد إصابات سابقة</option>
+					</select>
+				</div>
+				<button class="btn-primary" onclick="processResult()">
+					تحليل مستوى الخطر ←
+				</button>
+			</div>
+
+			<div id="step2" class="step">
+				<div class="loading-ring">
+					<svg viewBox="0 0 120 120">
+						<circle class="track" cx="60" cy="60" r="54" />
+						<circle class="fill" cx="60" cy="60" r="54" />
+					</svg>
+				</div>
+				<p class="loading-text">جاري تحليل البيانات</p>
+				<p class="loading-sub">
+					يتم معالجة المؤشرات الحيوية الخاصة بك<br />
+					<span class="loading-dots"
+						><span></span><span></span><span></span
+					></span>
+				</p>
+			</div>
+
+			<div id="step3" class="step">
+				<h2>نتائج التقييم</h2>
+				<div class="score-ring">
+					<svg viewBox="0 0 120 120">
+						<circle class="bg-circle" cx="60" cy="60" r="54" />
+						<circle class="fg-circle" id="fgCircle" cx="60" cy="60" r="54" />
+					</svg>
+					<div class="score-inner">
+						<span class="score-number" id="scoreNum">0</span>
+						<span class="score-label">نقاط الخطر</span>
+					</div>
+				</div>
+				<div id="resBadge" class="status-badge">
+					<span class="dot" id="badgeDot"></span>
+					<span id="badgeText">جاري التحديد...</span>
+				</div>
+				<div class="stats-row" id="statsRow"></div>
+				<div class="advice-box" id="resAdvice"></div>
+				<button class="btn-primary" onclick="location.reload()">
+					تقييم جديد
+				</button>
+				<button class="btn-secondary" onclick="location.reload()">
+					↺ إعادة الإدخال
+				</button>
+			</div>
+		</div>
+		<script>
+			document.getElementById("fatigue").addEventListener("input", function () {
+				document.getElementById("fatigueVal").textContent = this.value;
+			});
+			document
+				.getElementById("hasPain")
+				.addEventListener("change", function () {
+					document.getElementById("painLocationGroup").style.display =
+						this.value === "yes" ? "block" : "none";
+				});
+			function showStep(id) {
+				document
+					.querySelectorAll(".step")
+					.forEach((s) => s.classList.remove("active"));
+				document.getElementById(id).classList.add("active");
+			}
+			function processResult() {
+				showStep("step2");
+				setTimeout(calculateRisk, 1800);
+			}
+			function calculateRisk() {
+				const sleep =
+					parseFloat(document.getElementById("sleepHours").value) || 0;
+				const train =
+					parseFloat(document.getElementById("trainHours").value) || 0;
+				const fatigue = parseInt(document.getElementById("fatigue").value);
+				const hasPain = document.getElementById("hasPain").value;
+				const prevInjury = document.getElementById("prevInjury").value;
+				const name =
+					document.getElementById("name").value.trim() || "أيها الرياضي";
+				let score = 0;
+				if (sleep < 5) score += 5;
+				else if (sleep < 7) score += 2;
+				if (train > 4) score += 3;
+				else if (train >= 2) score += 1;
+				if (hasPain === "yes") score += 5;
+				if (fatigue >= 8) score += 4;
+				else if (fatigue >= 5) score += 2;
+				if (prevInjury === "yes") score += 3;
+				displayResult(score, name, sleep, train, fatigue);
+			}
+			function displayResult(score, name, sleep, train, fatigue) {
+				const badge = document.getElementById("resBadge");
+				const dot = document.getElementById("badgeDot");
+				const badgeTxt = document.getElementById("badgeText");
+				const advice = document.getElementById("resAdvice");
+				const scoreEl = document.getElementById("scoreNum");
+				const statsEl = document.getElementById("statsRow");
+				const fg = document.getElementById("fgCircle");
+				const offset = 339.3 - (score / 20) * 339.3;
+				let color, badgeLabel, adviceHTML;
+				if (score <= 7) {
+					color = "#10b981";
+					badgeLabel = "آمن — خطر منخفض";
+					badge.style.cssText =
+						"display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:30px;font-weight:700;font-size:0.9rem;margin-bottom:1.5rem;color:#10b981;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3)";
+					adviceHTML = `<span class="intro"> <strong>${name}</strong>، مؤشراتك جيدة. إليك بعض التوصيات:</span><ul><li>القيام بتمارين إحماء خفيفة قبل ممارسة النشاط البدني.</li><li>استخدام كمادات باردة على مكان الإصابة لتقليل الألم أو التورم.</li><li>الراحة لفترة قصيرة وتجنب الضغط على الجزء المصاب.</li></ul>`;
+				} else if (score <= 12) {
+					color = "#f59e0b";
+					badgeLabel = "تحذير — خطر متوسط";
+					badge.style.cssText =
+						"display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:30px;font-weight:700;font-size:0.9rem;margin-bottom:1.5rem;color:#f59e0b;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3)";
+					adviceHTML = `<span class="intro"> <strong>${name}</strong>، جسمك يُظهر علامات إجهاد. إليك ما يجب فعله:</span><ul><li>التوقف عن النشاط البدني فور الشعور بالألم.</li><li>عمل كمادات باردة مع رفع الجزء المصاب إن أمكن.</li><li>أخذ قسط كافٍ من الراحة ومراجعة مختص إذا استمر الألم.</li></ul>`;
+				} else {
+					color = "#ef4444";
+					badgeLabel = "خطر مرتفع جداً ⚠";
+					badge.style.cssText =
+						"display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:30px;font-weight:700;font-size:0.9rem;margin-bottom:1.5rem;color:#ef4444;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3)";
+					adviceHTML = `<span class="intro">تحذير عاجل  <strong>${name}</strong>! مؤشراتك تشير إلى احتمال إصابة مرتفع:</span><ul><li>التوقف التام عن الحركة وعدم محاولة استخدام الجزء المصاب.</li><li>تثبيت المنطقة المصابة ووضع كمادات باردة لتقليل التورم.</li><li>التوجه فورًا للطبيب أو لأقرب مركز طبي للحصول على العلاج المناسب.</li></ul>`;
+				}
+				fg.style.stroke = color;
+				fg.style.filter = "drop-shadow(0 0 8px " + color + ")";
+				dot.style.background = color;
+				dot.style.boxShadow = "0 0 8px " + color;
+				badgeTxt.textContent = badgeLabel;
+				document.getElementById("resAdvice").style.borderRightColor = color;
+				advice.innerHTML = adviceHTML;
+				statsEl.innerHTML =
+					'<div class="stat-pill"><div class="val">' +
+					sleep +
+					'h</div><div class="lbl">النوم</div></div><div class="stat-pill"><div class="val">' +
+					train +
+					'h</div><div class="lbl">التدريب</div></div><div class="stat-pill"><div class="val">' +
+					fatigue +
+					'/10</div><div class="lbl">الإرهاق</div></div>';
+				showStep("step3");
+				let cur = 0;
+				const inc = Math.max(1, Math.ceil(score / 20));
+				const t = setInterval(() => {
+					cur = Math.min(cur + inc, score);
+					scoreEl.textContent = cur;
+					if (cur >= score) clearInterval(t);
+				}, 50);
+				setTimeout(() => {
+					fg.style.strokeDashoffset = offset;
+				}, 100);
+			}
+		</script>
+	</body>
+</html>
